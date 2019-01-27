@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">Number and Maze</string>
+    <string name="playButton">Play</string>
+    <string name="chooseYourGameTextView">Choose your game</string>
+    <string name="classicGame6x6Board">Classic - 6x6</string>
+    <string name="classicGame8x8Board">Classic - 8x8</string>
+    <string name="gameDefaultScore">0</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="squareDefaultValue">\?</string>
 </resources>
