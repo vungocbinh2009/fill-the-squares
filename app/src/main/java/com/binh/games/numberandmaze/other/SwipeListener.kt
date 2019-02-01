@@ -12,13 +12,25 @@ import android.view.View
 abstract class OnSwipeTouchListener(context: Context) : View.OnTouchListener {
     private val gestureDetector: GestureDetector = GestureDetector(context, GestureListener())
 
+    /**
+     * swipe sang trái.
+     */
     abstract fun onSwipeLeft()
 
+    /**
+     * swipe sang phải.
+     */
     abstract fun onSwipeRight()
 
-    abstract fun onSwipeUp()
+    /**
+     * swipe lên trên.
+     */
+    abstract fun onSwipeTop()
 
-    abstract fun onSwipeDown()
+    /**
+     * swipe xuống dưới.
+     */
+    abstract fun onSwipeBottom()
 
     override fun onTouch(v: View, event: MotionEvent): Boolean {
         return gestureDetector.onTouchEvent(event)
@@ -44,10 +56,10 @@ abstract class OnSwipeTouchListener(context: Context) : View.OnTouchListener {
 
             if (Math.abs(distanceX) < Math.abs(distanceY) && Math.abs(distanceY) > SWIPE_DISTANCE_THRESHOLD_Y
                     && Math.abs(velocityY) > SWIPE_VELOCITY_THRESHOLD_Y) {
-                if (distanceY > 0)
-                    onSwipeUp()
+                if (distanceY < 0)
+                    onSwipeTop()
                 else
-                    onSwipeDown()
+                    onSwipeBottom()
                 return true
             }
             return false

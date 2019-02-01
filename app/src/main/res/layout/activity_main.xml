@@ -22,7 +22,7 @@
             android:text="@string/playButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/button"
+            android:id="@+id/playButton"
             style="@style/Widget.AppCompat.Button.Borderless" android:background="@color/appNameColor"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintBottom_toBottomOf="parent" android:layout_marginBottom="121dp"

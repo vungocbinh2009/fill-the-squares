@@ -7,4 +7,7 @@
     <color name="gameSelectionColor1">#0ea916</color>
     <color name="gameSelectionColor2">#85e558</color>
     <color name="squareDefaultColor">#bab8b8</color>
+    <color name="squareColorRed">#e72c4b</color>
+    <color name="squareColorBlue">#1665db</color>
+    <color name="textDefaultColor">#000000</color>
 </resources>

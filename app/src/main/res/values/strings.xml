@@ -7,4 +7,10 @@
     <string name="gameDefaultScore">0</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="squareDefaultValue">\?</string>
+    <string name="mainMenuButton">Menu</string>
+    <string name="newGameButton">New game</string>
+    <string name="playingGameState">Playing</string>
+    <string name="gameWonState">You win</string>
+    <string name="gameLostState">You lose</string>
+    <string name="loadingText">Loading…</string>
 </resources>

@@ -3,7 +3,7 @@
              xmlns:tools="http://schemas.android.com/tools"
              android:layout_width="match_parent"
              android:layout_height="wrap_content"
-             tools:context=".fragment.Board6x6Fragment">
+             tools:context=".fragment.Board6x6Fragment" android:id="@+id/table6x6">
 
     <TableRow
             android:layout_width="match_parent"

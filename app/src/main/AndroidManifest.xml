@@ -11,16 +11,19 @@
             android:supportsRtl="true"
             android:theme="@style/AppTheme"
             tools:ignore="AllowBackup,GoogleAppIndexingWarning" android:fullBackupContent="@xml/backup_descriptor">
-        <activity android:name=".MainActivity">
+        <activity android:name=".MainActivity"
+        android:screenOrientation="sensorPortrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <activity android:name=".activity.GameSelectionActivity">
+        <activity android:name=".activity.GameSelectionActivity"
+                  android:screenOrientation="sensorPortrait">
         </activity>
-        <activity android:name=".activity.ClassicGameActivity">
+        <activity android:name=".activity.ClassicGameActivity"
+                  android:screenOrientation="sensorPortrait">
         </activity>
     </application>
 
