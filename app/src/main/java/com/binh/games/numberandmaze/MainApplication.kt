@@ -2,6 +2,7 @@ package com.binh.games.numberandmaze
 
 import android.app.Application
 import com.binh.games.numberandmaze.other.*
+import io.realm.Realm
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
 
@@ -14,7 +15,7 @@ import org.kodein.di.KodeinAware
  */
 class MainApplication : Application(), KodeinAware {
 
-    override val kodein: Kodein = Kodein {
+    override val kodein: Kodein = Kodein.lazy {
         // Xây dựng các object cần thiết.
         import(basic)
         import(classicGame6x6)
@@ -22,5 +23,11 @@ class MainApplication : Application(), KodeinAware {
         import(validClassicGame6x6)
         import(validClassicGame8x8)
         import(boardFragment)
+        import(gameDatabase)
+    }
+
+    override fun onCreate() {
+        super.onCreate()
+        Realm.init(this)
     }
 }

@@ -34,6 +34,7 @@ class ClassicGameManager(override val board: IBoard, override var player: IPlaye
     }
 
     private fun updateGame() {
+        score -= board.getCell(player.previousPlayerPosition).number
         score--
         checkGameState()
     }

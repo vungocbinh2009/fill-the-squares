@@ -3,13 +3,9 @@ package com.binh.games.numberandmaze.viewmodel
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
-import android.content.Context
-import com.binh.games.numberandmaze.activity.ClassicGameActivity
 import com.binh.games.numberandmaze.core.basic.IGameManager
-import com.binh.games.numberandmaze.core.classicgame.ClassicGameManager
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
-import org.kodein.di.android.closestKodein
 
 /**
  * Đây là ViewModel được dùng để cung cấp các thông tin co bản
@@ -91,5 +87,43 @@ class ClassicGameViewModel : ViewModel(), KodeinAware {
         val result = MutableLiveData<Pair<Int, Int>>()
         result.value = gameManager.player.previousPlayerPosition
         return result
+    }
+
+    /**
+     * Hàm này trả về danh sách các ô mà người chơi đã đi qua
+     * trong nước đi trước đó.
+     */
+    fun playerMoveAllCell(): LiveData<List<Pair<Int, Int>>> {
+        val result = MutableLiveData<List<Pair<Int, Int>>>()
+        result.value = gameManager.player.playerMoveAllCell()
+        return result
+    }
+
+    /**
+     * Phương thức này giúp người chơi di chuyển lên trên.
+     */
+    fun up() {
+        gameManager.up()
+    }
+
+    /**
+     * Phương thức này giúp người chơi di chuyển xuống dưới.
+     */
+    fun down() {
+        gameManager.down()
+    }
+
+    /**
+     * Phương thức này giúp người chơi di chuyển sang trái.
+     */
+    fun left() {
+        gameManager.left()
+    }
+
+    /**
+     * Phương thức này giúp người chơi di chuyển sang phải.
+     */
+    fun right() {
+        gameManager.right()
     }
 }

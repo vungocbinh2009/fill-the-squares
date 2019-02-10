@@ -46,4 +46,10 @@
             android:layout_marginBottom="65dp" android:background="@color/appNameColor" android:visibility="invisible"
             android:layout_marginEnd="24dp"
             app:layout_constraintVertical_bias="0.51"/>
+    <TextView
+            android:text="@string/loadingText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/loadingGameTextView" app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" tools:text="@string/loadingText"/>
 </android.support.constraint.ConstraintLayout>

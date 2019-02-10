@@ -13,4 +13,12 @@
     <string name="gameWonState">You win</string>
     <string name="gameLostState">You lose</string>
     <string name="loadingText">Loading…</string>
+    <string name="statisticTextView">Statistic</string>
+    <string name="numberOfGameTextView">Number of games</string>
+    <string name="topTenScoreTextView"> Top 10 score </string>
+    <string name="statisticButton">Statistics</string>
+    <string name="unknownValue">\?</string>
+    <string name="highestScoreLabel">Highest</string>
+    <string name="averageScoreLabel">Average</string>
+    <string name="lowestScoreLabel">Lowest</string>
 </resources>

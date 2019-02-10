@@ -6,6 +6,10 @@ apply plugin: 'kotlin-android-extensions'
 
 apply plugin: 'org.jetbrains.dokka'
 
+apply plugin: 'kotlin-kapt'
+
+apply plugin: 'realm-android'
+
 android {
     compileSdkVersion 28
     defaultConfig {
@@ -15,14 +19,25 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        vectorDrawables.useSupportLibrary = true
     }
     buildTypes {
         release {
-            //noinspection GroovyAssignabilityCheck
-            minifyEnabled false
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+        debug {
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
+    compileOptions {
+        sourceCompatibility 1.8
+        targetCompatibility 1.8
+    }
+
+
 }
 
 dependencies {
@@ -34,10 +49,11 @@ dependencies {
     implementation "android.arch.lifecycle:extensions:1.1.1"
     implementation 'org.kodein.di:kodein-di-generic-jvm:6.0.1'
     implementation 'org.kodein.di:kodein-di-framework-android-support:6.0.1'
-    implementation "org.jetbrains.anko:anko-commons:0.10.8"
-    implementation "org.jetbrains.anko:anko-sqlite:0.10.8"
-    implementation "org.jetbrains.anko:anko-appcompat-v7-commons:0.10.8"
+    //implementation "org.jetbrains.anko:anko-commons:0.10.8"
+    //implementation "org.jetbrains.anko:anko-appcompat-v7-commons:0.10.8"
     implementation 'com.android.support:design:28.0.0'
+    implementation 'com.android.support:support-v4:28.0.0'
+    implementation 'com.android.support:support-vector-drawable:28.0.0'
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
