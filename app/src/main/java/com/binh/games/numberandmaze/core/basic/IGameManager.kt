@@ -56,4 +56,20 @@ interface IGameManager {
      * người chơi đi sang trái.
      */
     fun right() : IGameManager
+
+    /**
+     * Phương thức này dùng để lấy danh sách các vị trí người chơi có thể
+     * đi được tại thời điểm hiện tại.
+     */
+    fun getPossibleMove() : List<Pair<Int, Int>> {
+        return player.playerPossibleMove(player.playerPosition, board)
+    }
+
+    /**
+     * Phương thức này dùng để lấy danh sách các vị trí người chơi có thể
+     * đi được tại thời điểm trước đó.
+     */
+    fun getPreviousPossibleMove() : List<Pair<Int, Int>> {
+        return player.playerPossibleMove(player.previousPlayerPosition, board)
+    }
 }

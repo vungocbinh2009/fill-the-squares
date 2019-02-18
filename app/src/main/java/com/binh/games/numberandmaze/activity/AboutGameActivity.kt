@@ -5,7 +5,7 @@ import android.os.Bundle
 import android.view.Window
 import com.binh.games.numberandmaze.R
 
-class GameSettingsActivity : AppCompatActivity() {
+class AboutGameActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -13,8 +13,6 @@ class GameSettingsActivity : AppCompatActivity() {
         requestWindowFeature(Window.FEATURE_NO_TITLE)
         supportActionBar?.hide()
 
-        setContentView(R.layout.activity_game_settings)
-
-
+        setContentView(R.layout.activity_about_game)
     }
 }

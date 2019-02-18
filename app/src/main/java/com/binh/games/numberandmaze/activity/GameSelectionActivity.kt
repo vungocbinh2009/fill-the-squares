@@ -37,19 +37,17 @@ class GameSelectionActivity : AppCompatActivity() {
 
         setContentView(R.layout.activity_game_selection)
 
-        classic6x6button.setOnClickListener {
-            showSnackBar()
-            val result = Intent()
-            result.putExtra(PLAYER_SELECTION, CLASSIC_GAME_6X6)
-            setResult(Activity.RESULT_OK, result)
+        classicGame6x6Button.setOnClickListener {
+            val intent = Intent(this, MainActivity::class.java)
+            intent.putExtra(PLAYER_SELECTION, CLASSIC_GAME_6X6)
+            setResult(Activity.RESULT_OK, intent)
             finish()
         }
 
-        classic8x8button.setOnClickListener {
-            showSnackBar()
-            val result = Intent()
-            result.putExtra(PLAYER_SELECTION, CLASSIC_GAME_8X8)
-            setResult(Activity.RESULT_OK, result)
+        classicGame8x8Button.setOnClickListener {
+            val intent = Intent(this, MainActivity::class.java)
+            intent.putExtra(PLAYER_SELECTION, CLASSIC_GAME_8X8)
+            setResult(Activity.RESULT_OK, intent)
             finish()
         }
     }
@@ -67,5 +65,4 @@ class GameSelectionActivity : AppCompatActivity() {
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
         startActivity(intent)
     }
-
 }

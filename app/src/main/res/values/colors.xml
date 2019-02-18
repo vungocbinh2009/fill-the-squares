@@ -2,12 +2,13 @@
 <resources>
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
-    <color name="colorAccent">#FF4081</color>
+    <color name="colorAccent">#4BE72C</color>
     <color name="appNameColor">#4BE72C</color>
-    <color name="gameSelectionColor1">#0ea916</color>
-    <color name="gameSelectionColor2">#85e558</color>
+    <color name="gameSelectionColor1">#0EA916</color>
+    <color name="gameSelectionColor2">#85E558</color>
     <color name="squareDefaultColor">#bab8b8</color>
     <color name="squareColorRed">#E72C4B</color>
     <color name="squareColorBlue">#1665DB</color>
     <color name="textDefaultColor">#000000</color>
+    <color name="possibleMoveColor">#F9EC63</color>
 </resources>

@@ -11,6 +11,7 @@ import com.binh.games.numberandmaze.activity.GameSelectionActivity
 import com.binh.games.numberandmaze.activity.GameSelectionActivity.Companion.CLASSIC_GAME_6X6
 import com.binh.games.numberandmaze.activity.GameSelectionActivity.Companion.CLASSIC_GAME_8X8
 import com.binh.games.numberandmaze.activity.GameSelectionActivity.Companion.PLAYER_SELECTION
+import com.binh.games.numberandmaze.activity.GameSettingsActivity
 import com.binh.games.numberandmaze.activity.GameStatisticActivity
 import kotlinx.android.synthetic.main.activity_main.*
 
@@ -75,6 +76,11 @@ class MainActivity : AppCompatActivity() {
         statisticButton.setOnClickListener {
             val intent = Intent(this, GameSelectionActivity::class.java)
             startActivityForResult(intent, SELECT_STATISTIC)
+        }
+
+        settingsButton.setOnClickListener {
+            val intent = Intent(this, GameSettingsActivity::class.java)
+            startActivity(intent)
         }
     }
 

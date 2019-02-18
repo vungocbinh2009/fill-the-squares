@@ -21,4 +21,15 @@
     <string name="highestScoreLabel">Highest</string>
     <string name="averageScoreLabel">Average</string>
     <string name="lowestScoreLabel">Lowest</string>
+    <string name="settingTextView">Settings</string>
+    <string name="playerNameSettingTextView">Player name</string>
+    <string name="playerColorSettingTextView">Player color</string>
+    <string name="fullScreenSettingTextView">Full screen</string>
+    <string name="aboutTextView">About</string>
+    <string name="playerColorSettingSummary">Set your square color when you play</string>
+    <string name="fullScreenSettingSummary">When you play</string>
+    <string name="settingButton">Settings</string>
+    <string name="gameVersion">Version 0.3</string>
+    <string name="gameAuthor">From Vu Ngoc Binh with love</string>
+    <string name="howToPlayTextView">Swipe the screen to move your square to the position of the blue square</string>
 </resources>

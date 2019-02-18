@@ -4,11 +4,13 @@ import android.app.Activity
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.preference.PreferenceManager
 import android.support.v4.app.Fragment
+import android.support.v7.app.AppCompatActivity
 import android.view.View
 import android.view.Window
+import android.view.WindowManager
 import com.binh.games.numberandmaze.MainActivity
 import com.binh.games.numberandmaze.R
 import com.binh.games.numberandmaze.core.basic.IGameManager
@@ -19,19 +21,22 @@ import com.binh.games.numberandmaze.other.InjectConstant
 import com.binh.games.numberandmaze.other.OnSwipeTouchListener
 import com.binh.games.numberandmaze.viewmodel.ClassicGameViewModel
 import kotlinx.android.synthetic.main.activity_classic_game.*
+import kotlinx.coroutines.*
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.closestKodein
 import org.kodein.di.direct
 import org.kodein.di.generic.instance
 import java.util.*
+import kotlin.coroutines.CoroutineContext
 
 /**
  * Đây là activity dùng để chơi game.
  *
  * Các màn chơi classic sẽ được tổ chức tại đây.
  */
-class ClassicGameActivity : AppCompatActivity(), KodeinAware {
+class ClassicGameActivity : AppCompatActivity(), KodeinAware, CoroutineScope {
+    override val coroutineContext: CoroutineContext = Dispatchers.Main
     /**
      * Thuộc tính này là mã số của hành động "chọn game mới"
      *
@@ -39,17 +44,19 @@ class ClassicGameActivity : AppCompatActivity(), KodeinAware {
      */
     companion object {
         const val SELECT_NEW_GAME = 1
+        val SQUARE_COLOR_LIST: Map<String, Int> = mapOf("green" to R.color.appNameColor, "purple" to R.color.colorPrimaryDark, "red" to R.color.squareColorRed)
     }
+    private var playerName: String? = "player1"
     /**
      * Thuộc tính này lưu lại màu của ô dành cho người chơi.
      */
-    private val playerColor: Int = R.color.appNameColor
+    private var playerColor: Int = R.color.appNameColor
 
     /**
      * Thuộc tính này lưu lại màu của ô đich (là ô mà người chơi
      * cần đến được sau 1 số hữu hạn bước.
      */
-    private val wonSquareColor: Int = R.color.squareColorBlue
+    private var wonSquareColor: Int = R.color.squareColorBlue
 
     override val kodein: Kodein by closestKodein()
 
@@ -69,49 +76,65 @@ class ClassicGameActivity : AppCompatActivity(), KodeinAware {
      */
     private lateinit var boardFragment: IBoardFragment
 
+    private var firstInit = true
+
     /**
      * Phương thức onCreate, nó sẽ được gọi khi activity được khởi tạo.
      */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         // Giấu thanh ActionBar.
         requestWindowFeature(Window.FEATURE_NO_TITLE)
         supportActionBar?.hide()
 
         setContentView(R.layout.activity_classic_game)
 
-        when(intent.getStringExtra("gameBoard")) {
-            "6x6" -> {
-                boardSize = Pair(6,6)
-                boardFragment = kodein.direct.instance(InjectConstant.BOARD_6X6_FRAGMENT)
+        val boardFragment =
+            when (intent.getStringExtra("gameBoard")) {
+                "6x6" -> {
+                    boardSize = Pair(6, 6)
+                    kodein.direct.instance(InjectConstant.BOARD_6X6_FRAGMENT)
+                }
+                "8x8" -> {
+                    boardSize = Pair(8, 8)
+                    kodein.direct.instance(InjectConstant.BOARD_8X8_FRAGMENT)
+                }
+                else -> kodein.direct.instance<IBoardFragment>(InjectConstant.BOARD_8X8_FRAGMENT)
             }
-            "8x8" -> {
-                boardSize = Pair(8,8)
-                boardFragment = kodein.direct.instance(InjectConstant.BOARD_8X8_FRAGMENT)
-            }
-        }
         supportFragmentManager.beginTransaction().add(R.id.fragment_container,
-                boardFragment as Fragment).commit()
+                    boardFragment as Fragment).commit()
+        this.boardFragment = boardFragment
+
+        playerColor = SQUARE_COLOR_LIST[PreferenceManager.getDefaultSharedPreferences(this)?.getString("player_color", "green")]!!
+        playerName = PreferenceManager.getDefaultSharedPreferences(this).getString("player_name", "player1")
+        if (PreferenceManager.getDefaultSharedPreferences(this).getBoolean("is_full_screen", false)) {
+            window.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN)
+        }
+
     }
 
     override fun onWindowFocusChanged(hasFocus: Boolean) {
         super.onWindowFocusChanged(hasFocus)
         if(hasFocus) {
-            gameViewModel = ViewModelProviders.of(this)[ClassicGameViewModel::class.java]
-
-            when(intent.getStringExtra("gameBoard")) {
-                "6x6" -> {
-                    gameViewModel.build(kodein.direct
-                            .instance(InjectConstant.CLASSIC_GAME_MANAGER_6X6_WITH_VALIDATION))
-                }
-                "8x8" -> {
-                    gameViewModel.build(kodein.direct
-                            .instance(InjectConstant.CLASSIC_GAME_MANAGER_8X8_WITH_VALIDATION))
+            if (firstInit) {
+                launch {
+                    val gameViewModel = ViewModelProviders.of(this@ClassicGameActivity)[ClassicGameViewModel::class.java]
+                    when (intent.getStringExtra("gameBoard")) {
+                        "6x6" -> {
+                            gameViewModel.build(kodein.direct
+                                    .instance(InjectConstant.CLASSIC_GAME_MANAGER_6X6_WITH_VALIDATION))
+                        }
+                        "8x8" -> {
+                            gameViewModel.build(kodein.direct
+                                    .instance(InjectConstant.CLASSIC_GAME_MANAGER_8X8_WITH_VALIDATION))
+                        }
+                    }
+                    firstInit = false
+                    this@ClassicGameActivity.gameViewModel = gameViewModel
+                    setupGame()
+                    loadingGameTextView.visibility = View.INVISIBLE
                 }
             }
-            setupGame()
-            loadingGameTextView.visibility = View.INVISIBLE
         }
     }
 
@@ -139,6 +162,13 @@ class ClassicGameActivity : AppCompatActivity(), KodeinAware {
      * Hàm này tô màu các ô trên bảng, tương ứng với trạng thái hiện tại của trò chơi.
      */
     private fun setCurrentColor() {
+        // Tô màu cho các ô người chơi có thể đi được.
+        gameViewModel.playerPossibleMove().observe(this, Observer {
+            for (possibleSquare in it!!) {
+                boardFragment.setSquareColor(possibleSquare, R.color.possibleMoveColor)
+            }
+        })
+
         // Tô màu ô của người chơi.
         gameViewModel.playerPosition().observe(this, Observer {
             boardFragment.setSquareColor(it!!, playerColor)
@@ -184,8 +214,8 @@ class ClassicGameActivity : AppCompatActivity(), KodeinAware {
      */
     private fun updateGame() {
         updateScore()
-        setCurrentColor()
         removeOldColor()
+        setCurrentColor()
         checkGameState()
     }
 
@@ -207,6 +237,12 @@ class ClassicGameActivity : AppCompatActivity(), KodeinAware {
                 boardFragment.setSquareColor(it!!, R.color.squareDefaultColor)
             })
         }
+
+        gameViewModel.previousPlayerPossibleMove().observe(this, Observer {
+            for (oldPossibleMove in it!!) {
+                boardFragment.setSquareColor(oldPossibleMove, R.color.squareDefaultColor)
+            }
+        })
     }
 
     /**
@@ -236,6 +272,7 @@ class ClassicGameActivity : AppCompatActivity(), KodeinAware {
                 date = Calendar.getInstance().time))
         database.closeDatabase()
 
+        howToPlayTextView.visibility = View.INVISIBLE
         newGameButton.visibility = View.VISIBLE
         menuButton.visibility = View.VISIBLE
         scoreTextView.setBackgroundResource(R.color.appNameColor)

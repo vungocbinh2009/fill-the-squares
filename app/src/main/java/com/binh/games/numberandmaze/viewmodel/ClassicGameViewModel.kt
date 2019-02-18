@@ -99,6 +99,18 @@ class ClassicGameViewModel : ViewModel(), KodeinAware {
         return result
     }
 
+    fun playerPossibleMove() : LiveData<List<Pair<Int, Int>>> {
+        val result = MutableLiveData<List<Pair<Int, Int>>>()
+        result.value = gameManager.getPossibleMove()
+        return result
+    }
+
+    fun previousPlayerPossibleMove() : LiveData<List<Pair<Int, Int>>> {
+        val result = MutableLiveData<List<Pair<Int, Int>>>()
+        result.value = gameManager.getPreviousPossibleMove()
+        return result
+    }
+
     /**
      * Phương thức này giúp người chơi di chuyển lên trên.
      */

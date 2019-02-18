@@ -130,9 +130,9 @@ val classicGame8x8 = Kodein.Module(CLASSIC_GAME_8X8_MODULE) {
 val validClassicGame6x6 = Kodein.Module(CLASSIC_GAME_6X6_MODULE_WITH_VALIDATION) {
     importOnce(classicGame6x6)
     bind<IBoard>(CLASSIC_BOARD_6X6_WITH_VALIDATION) with provider {
-        var randomBoard: IBoard = instance(CLASSIC_BOARD_6X6, arg = 1..3)
+        var randomBoard: IBoard = instance(CLASSIC_BOARD_6X6, arg = 2..4)
         while (!validateClassicBoard(randomBoard, instance(NORMAL_PLAYER), Pair(0,0))) {
-            randomBoard = instance(CLASSIC_BOARD_6X6, arg = 1..3)
+            randomBoard = instance(CLASSIC_BOARD_6X6, arg = 2..4)
         }
         randomBoard
     }
@@ -151,9 +151,9 @@ val validClassicGame6x6 = Kodein.Module(CLASSIC_GAME_6X6_MODULE_WITH_VALIDATION)
 val validClassicGame8x8 = Kodein.Module(CLASSIC_GAME_8X8_MODULE_WITH_VALIDATION) {
     importOnce(classicGame8x8)
     bind<IBoard>(CLASSIC_BOARD_8X8_WITH_VALIDATION) with provider {
-        var randomBoard: IBoard = instance(CLASSIC_BOARD_8X8, arg = 1..4)
+        var randomBoard: IBoard = instance(CLASSIC_BOARD_8X8, arg = 3..6)
         while (!validateClassicBoard(randomBoard, instance(NORMAL_PLAYER), Pair(0,0))) {
-            randomBoard = instance(CLASSIC_BOARD_8X8, arg = 1..4)
+            randomBoard = instance(CLASSIC_BOARD_8X8, arg = 3..6)
         }
         randomBoard
     }

@@ -30,6 +30,24 @@ interface IPlayer {
     fun playerMoveAllCell() : List<Pair<Int, Int>>
 
     /**
+     * Phương thức này trả về danh sách các ô mà người chơi có thể đi tới trong
+     * lượt đi tiếp theo của họ nếu họ đang đứng tại vị trí [position]
+     */
+    fun playerPossibleMove(position: Pair<Int, Int>, board: IBoard) : List<Pair<Int, Int>> {
+        val result = ArrayList<Pair<Int, Int>>()
+        val step = board.getCell(position).number
+        val move = arrayOf(board::nextCellDown, board::nextCellUp, board::nextCellLeft, board::nextCellRight)
+        for (i in 0..3) {
+            var finalPosition = position
+            for (j in 1..step) {
+                finalPosition = move[i](finalPosition)
+            }
+            result.add(finalPosition)
+        }
+        return result
+    }
+
+    /**
      * Phương thức này giúp người chơi đi lên trên.
      */
     fun up(board: IBoard) : Pair<Int, Int>
