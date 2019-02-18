@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Number and Maze</string>
+    <string name="app_name">Fill the squares</string>
     <string name="playButton">Play</string>
     <string name="chooseYourGameTextView">Choose your game</string>
     <string name="classicGame6x6Board">Classic - 6x6</string>
@@ -30,6 +30,6 @@
     <string name="fullScreenSettingSummary">When you play</string>
     <string name="settingButton">Settings</string>
     <string name="gameVersion">Version 0.3</string>
-    <string name="gameAuthor">From Vu Ngoc Binh with love</string>
-    <string name="howToPlayTextView">Swipe the screen to move your square to the position of the blue square</string>
+    <string name="gameAuthor">From vbinhdev98 with love</string>
+    <string name="howToPlayTextView">Swipe the screen to color all the squares to white color</string>
 </resources>

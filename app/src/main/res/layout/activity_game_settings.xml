@@ -22,7 +22,7 @@
 
     <fragment
         android:id="@+id/fragment"
-        android:name="com.binh.games.numberandmaze.fragment.GameSettingsFragment"
+        android:name="com.binh.games.fillthesquares.fragment.GameSettingsFragment"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"

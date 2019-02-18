@@ -8,7 +8,7 @@
     <TableRow
             android:layout_width="match_parent"
             android:layout_height="match_parent">
-        <com.binh.games.numberandmaze.customview.SquareTextView
+        <com.binh.games.fillthesquares.customview.SquareTextView
                 android:text="@string/loadingText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" android:id="@+id/loadingTextView" android:textSize="18sp"/>
