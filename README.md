@@ -1,3 +1,3 @@
-# Number and Maze
+# Fill the squares
 
-Dự án game đầu tiên của tôi trên android.
+Trò chơi thứ hai của tôi trên android
