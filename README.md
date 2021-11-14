@@ -1,3 +1,3 @@
 # Fill the squares
 
-Trò chơi thứ hai của tôi trên android
+Trò chơi đầu tiên của tôi trên Android
