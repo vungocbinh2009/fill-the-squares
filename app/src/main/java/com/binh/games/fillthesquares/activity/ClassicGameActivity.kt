@@ -1,26 +1,33 @@
 package com.binh.games.fillthesquares.activity
 
+import android.annotation.SuppressLint
 import android.app.Activity
-import android.arch.lifecycle.Observer
-import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
-import android.preference.PreferenceManager
-import android.support.v4.app.Fragment
-import android.support.v7.app.AppCompatActivity
+import android.view.ContextThemeWrapper
 import android.view.View
 import android.view.Window
-import android.view.WindowManager
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
+import androidx.preference.PreferenceManager
 import com.binh.games.fillthesquares.MainActivity
 import com.binh.games.fillthesquares.R
-import com.binh.games.fillthesquares.core.basic.IGameManager
+import com.binh.games.fillthesquares.core.basic.BoardCellState
+import com.binh.games.fillthesquares.core.basic.GameState
+import com.binh.games.fillthesquares.core.basic.MoveDirection
+import com.binh.games.fillthesquares.core.basic.getBoardCellState
 import com.binh.games.fillthesquares.database.gamedata.GameDataObject
 import com.binh.games.fillthesquares.database.gamedata.IGameStatisticDatabase
+import com.binh.games.fillthesquares.databinding.ActivityClassicGameBinding
 import com.binh.games.fillthesquares.fragment.IBoardFragment
-import com.binh.games.fillthesquares.other.InjectConstant
+import com.binh.games.fillthesquares.other.InjectConstants
 import com.binh.games.fillthesquares.other.OnSwipeTouchListener
 import com.binh.games.fillthesquares.viewmodel.ClassicGameViewModel
-import kotlinx.android.synthetic.main.activity_classic_game.*
 import kotlinx.coroutines.*
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
@@ -32,54 +39,41 @@ import kotlin.coroutines.CoroutineContext
 
 /**
  * Đây là activity dùng để chơi game.
- *
  * Các màn chơi classic sẽ được tổ chức tại đây.
  */
 class ClassicGameActivity : AppCompatActivity(), KodeinAware, CoroutineScope {
+    companion object {
+        const val HOW_TO_PLAY_MESSAGE = "When starting the game, you are on the upper left square. Every time you go through a cell in the table, that cell will turn white. Your task is to switch all the cells in the table to white. On each cell of the table there is a number, which specifies the number of steps you can take when moving on the board. The blue numbers on the board will suggest you this."
+    }
     override val coroutineContext: CoroutineContext = Dispatchers.Main
     /**
-     * Thuộc tính này là mã số của hành động "chọn game mới"
-     *
-     * Nó thường được diễn ra sau khi người chơi đã chơi xong màn chơi này.
+     * Thuộc tính này quy định màu của các loại ô trong khi hiển thị game
      */
-    companion object {
-        const val SELECT_NEW_GAME = 1
-        val SQUARE_COLOR_LIST: Map<String, Int> = mapOf("green" to R.color.appNameColor, "purple" to R.color.colorPrimaryDark, "red" to R.color.squareColorRed)
-    }
-    private var playerName: String? = "player1"
+    private val gameColor = mutableMapOf(
+            "passedSquare" to Color.TRANSPARENT,
+            "currentPosition" to Color.GREEN, // Day chi la gia tri tam thoi, se duoc set lai o onCreate.
+            "possibleMove" to Color.BLUE,
+            "normalSquare" to Color.GRAY,
+            "goldSquare" to Color.YELLOW
+    )
     /**
-     * Thuộc tính này lưu lại màu của ô dành cho người chơi.
-     */
-    private var playerColor: Int = R.color.appNameColor
-
-    /**
-     * Thuộc tính này lưu lại màu của ô đich (là ô mà người chơi
-     * cần đến được sau 1 số hữu hạn bước.
-     */
-    private var wonSquareColor: Int = R.color.squareColorBlue
-
-    override val kodein: Kodein by closestKodein()
-
-    /**
-     * Thuộc tính này lưu lại kích thước của bảng trong trò chơi.
+     * Thuộc tính biểu thị kích cỡ bảng.
      */
     private lateinit var boardSize: Pair<Int, Int>
-
     /**
-     * Thuộc tính này lưu lại 1 viewModel, nơi sẽ cung cấp các thông tin
-     * về màn chơi, và các thạng thái hiện tại của nó.
+     * Viewmodel dùng để lấy các thông tin của trò chơi, cần thiết cho việc hiển thị.
      */
-    private lateinit var gameViewModel: ClassicGameViewModel
-
+    private val viewModel by lazy { ViewModelProvider(this).get(ClassicGameViewModel::class.java) }
     /**
-     * Thuộc tính này lưu lại bảng (là 1 fragment) của trò chơi.
+     * Fragment hiển thị bản đồ của trò chơi.
      */
-    private lateinit var boardFragment: IBoardFragment
-
+    private var boardFragment: IBoardFragment? = null
+    override val kodein: Kodein by closestKodein()
     private var firstInit = true
+    private lateinit var binding: ActivityClassicGameBinding
 
     /**
-     * Phương thức onCreate, nó sẽ được gọi khi activity được khởi tạo.
+     * Khởi tạo activity
      */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -87,251 +81,296 @@ class ClassicGameActivity : AppCompatActivity(), KodeinAware, CoroutineScope {
         requestWindowFeature(Window.FEATURE_NO_TITLE)
         supportActionBar?.hide()
 
-        setContentView(R.layout.activity_classic_game)
-
-        val boardFragment =
-            when (intent.getStringExtra("gameBoard")) {
-                "6x6" -> {
-                    boardSize = Pair(6, 6)
-                    kodein.direct.instance(InjectConstant.BOARD_6X6_FRAGMENT)
-                }
-                "8x8" -> {
-                    boardSize = Pair(8, 8)
-                    kodein.direct.instance(InjectConstant.BOARD_8X8_FRAGMENT)
-                }
-                else -> kodein.direct.instance<IBoardFragment>(InjectConstant.BOARD_8X8_FRAGMENT)
-            }
-        supportFragmentManager.beginTransaction().add(R.id.fragment_container,
-                    boardFragment as Fragment).commit()
-        this.boardFragment = boardFragment
-
-        playerColor = SQUARE_COLOR_LIST[PreferenceManager.getDefaultSharedPreferences(this)?.getString("player_color", "green")]!!
-        playerName = PreferenceManager.getDefaultSharedPreferences(this).getString("player_name", "player1")
-        if (PreferenceManager.getDefaultSharedPreferences(this).getBoolean("is_full_screen", false)) {
-            window.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN)
+        // Đọc các giá trị trong Preferences
+        gameColor["currentPosition"] = when(PreferenceManager.getDefaultSharedPreferences(this).getString("player_square_color", "green")) {
+            "green" -> Color.GREEN
+            "blue" -> Color.BLUE
+            "red" -> Color.RED
+            else -> Color.GREEN
         }
 
+        binding = ActivityClassicGameBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
+        // Set dielog cho how to play.
+        binding.howToPlayDetailButton.setOnClickListener {
+            val builder = AlertDialog.Builder(this)
+            builder.setMessage(HOW_TO_PLAY_MESSAGE)
+                    .setTitle("How to play ?")
+                    .setPositiveButton("OK") { _, _ -> }
+                    .show()
+        }
+
+        // Chuẩn bị màn hình để xuất hiện trước user.
+        when(intent.getStringExtra(MainActivity.GAME_MODE)) {
+            GameSelectionActivity.CLASSIC_GAME_6X6, GameSelectionActivity.CLASSIC_GAME_6X6_HARD -> {
+                boardSize = Pair(6,6)
+                boardFragment = kodein.direct.instance(InjectConstants.BOARD_FRAGMENT_6x6)
+
+            }
+            GameSelectionActivity.CLASSIC_GAME_8X8, GameSelectionActivity.CLASSIC_GAME_8X8_HARD -> {
+                boardSize = Pair(8,8)
+                boardFragment = kodein.direct.instance(InjectConstants.BOARD_FRAGMENT_8x8)
+            }
+        }
+
+        // Add fragment để chơi.
+        supportFragmentManager
+                .beginTransaction()
+                .add(R.id.fragment_container, boardFragment as Fragment)
+                .commit()
     }
 
+    /**
+     * Những việc cần làm sau khi màn hình chơi game đã xuất hiện.
+     */
     override fun onWindowFocusChanged(hasFocus: Boolean) {
         super.onWindowFocusChanged(hasFocus)
-        if(hasFocus) {
+        if (hasFocus) {
             if (firstInit) {
                 launch {
-                    val gameViewModel = ViewModelProviders.of(this@ClassicGameActivity)[ClassicGameViewModel::class.java]
-                    when (intent.getStringExtra("gameBoard")) {
-                        "6x6" -> {
-                            gameViewModel.build(kodein.direct
-                                    .instance(InjectConstant.CLASSIC_GAME_MANAGER_6X6_WITH_VALIDATION))
+                    when (intent.getStringExtra(MainActivity.GAME_MODE)) {
+                        GameSelectionActivity.CLASSIC_GAME_6X6 -> {
+                            viewModel.build(kodein.direct.instance(InjectConstants.CLASSIC_GAME_MANAGER_6x6))
                         }
-                        "8x8" -> {
-                            gameViewModel.build(kodein.direct
-                                    .instance(InjectConstant.CLASSIC_GAME_MANAGER_8X8_WITH_VALIDATION))
+                        GameSelectionActivity.CLASSIC_GAME_8X8 -> {
+                            viewModel.build(kodein.direct.instance(InjectConstants.CLASSIC_GAME_MANAGER_8x8))
+                        }
+                        GameSelectionActivity.CLASSIC_GAME_6X6_HARD -> {
+                            viewModel.build(kodein.direct.instance(InjectConstants.CLASSIC_GAME_MANAGER_6x6_HARD))
+                        }
+                        GameSelectionActivity.CLASSIC_GAME_8X8_HARD -> {
+                            viewModel.build(kodein.direct.instance(InjectConstants.CLASSIC_GAME_MANAGER_8x8_HARD))
                         }
                     }
-                    firstInit = false
-                    this@ClassicGameActivity.gameViewModel = gameViewModel
                     setupGame()
-                    loadingGameTextView.visibility = View.INVISIBLE
+                    binding.loadingGameTextView.visibility = View.INVISIBLE
+                }
+                firstInit = false
+            }
+        }
+    }
+
+    /**
+     * Thực hiện việc setup game trước khi bắt đầu chơi.
+     */
+    private fun setupGame() {
+        updateScore()
+        viewModel.getAllBoardCell().observe(this, {
+            it?.forEach {position ->
+                setBoardCellColor(position)
+                boardFragment?.getSquare(position)?.text = viewModel.getBoardCell(position).number.toString()
+            }
+        })
+        setCurrentPlayerColor()
+        updateGameState()
+        setupSwipeAction()
+    }
+
+    /**
+     * Thực hiện việc cập nhất trang thái game trong khi chơi.
+     */
+    fun updateGame() {
+        updateScore()
+        removePlayerOldColor()
+        updateSquare()
+        setCurrentPlayerColor()
+        updateGameState()
+    }
+
+    /**
+     * Cấp nhất điểm số hiện tại.
+     */
+    private fun updateScore() {
+        viewModel.getScore().observe(this, {
+            binding.scoreTextView.text = it.toString()
+        })
+    }
+
+    // Đặt giá trị màu cho các ô trên bảng
+    private fun setBoardCellColor(position: Pair<Int, Int>) {
+        val view = boardFragment?.getSquare(position)
+        when(viewModel.getBoardCell(position).getBoardCellState()) {
+            BoardCellState.GOLD -> view?.setBackgroundColor(gameColor.getValue("goldSquare"))
+            BoardCellState.PASSED -> view?.setBackgroundColor(gameColor.getValue("passedSquare"))
+            BoardCellState.NORMAL -> view?.setBackgroundColor(gameColor.getValue("normalSquare"))
+        }
+    }
+
+    /**
+     * Xóa bỏ các màu sắc cũ của người chơi.
+     */
+    private fun removePlayerOldColor() {
+        viewModel.getPlayerPreviousPosition().observe(this, {
+            boardFragment?.getSquare(it!!)?.setBackgroundColor(gameColor.getValue("passedSquare"))
+        })
+        viewModel.getPlayerPreviousPossibleMove().observe(this, {
+            it?.forEach {position ->
+                boardFragment?.getSquare(position)?.setTextColor(Color.BLACK)
+            }
+        })
+    }
+
+    /**
+     * Cập nhật lại các ô trong bảng (chỉ cập nhật các ô cần thiết.
+     */
+    private fun updateSquare() {
+        viewModel.getChangedBoardCell().observe(this, {
+            it?.forEach { position ->
+                setBoardCellColor(position)
+            }
+        })
+    }
+
+    /**
+     * Setup màu cho các vị trí hiện tại của người chơi, bao gồm cả các bước đi người chơi có thể đi được.
+     */
+    private fun setCurrentPlayerColor() {
+        viewModel.getPlayerCurrentPossibleMove().observe(this, {
+            it?.forEach {position ->
+                boardFragment?.getSquare(position)?.setTextColor(gameColor.getValue("possibleMove"))
+            }
+        })
+        viewModel.getPlayerCurrentPosition().observe(this, {
+            boardFragment?.getSquare(it!!)?.setBackgroundColor(gameColor.getValue("currentPosition"))
+            boardFragment?.getSquare(it)?.setTextColor(Color.BLACK)
+        })
+    }
+
+    /**
+     * Cập nhật trạng thái của game.
+     */
+    private fun updateGameState() {
+        viewModel.getGameState().observe(this, Observer {
+            when(it) {
+                GameState.DONE -> onGameFinished()
+                else -> return@Observer
+            }
+        })
+    }
+
+    private var selectGameToPlayLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            val data: Intent? = result.data
+            when (data?.getStringExtra(GameSelectionActivity.PLAYER_SELECTION)) {
+                GameSelectionActivity.CLASSIC_GAME_6X6 -> {
+                    val intent = Intent(this, ClassicGameActivity::class.java)
+                    intent.putExtra(MainActivity.GAME_MODE, GameSelectionActivity.CLASSIC_GAME_6X6)
+                    startActivity(intent)
+                }
+                "8x8" -> {
+                    val intent = Intent(this, ClassicGameActivity::class.java)
+                    intent.putExtra(MainActivity.GAME_MODE, GameSelectionActivity.CLASSIC_GAME_8X8)
+                    startActivity(intent)
                 }
             }
         }
     }
 
-    private fun setupGame() {
-        updateNumber()
-        updateScore()
-        setCurrentColor()
-        setSwipeAction()
-    }
-
     /**
-     * Hàm này cập nhật các con số của các ô trong bảng.
-     */
-    private fun updateNumber() {
-        for (i in 0..(boardSize.first - 1)) {
-            for (j in 0..(boardSize.second - 1)) {
-                gameViewModel.boardNumber(Pair(i, j)).observe(this, Observer {
-                    boardFragment.setNumber(Pair(i,j), it!!)
-                })
-            }
-        }
-    }
-
-    /**
-     * Hàm này tô màu các ô trên bảng, tương ứng với trạng thái hiện tại của trò chơi.
-     */
-    private fun setCurrentColor() {
-        // Tô màu cho các ô người chơi có thể đi được.
-        gameViewModel.playerPossibleMove().observe(this, Observer {
-            for (possibleSquare in it!!) {
-                boardFragment.setSquareColor(possibleSquare, R.color.possibleMoveColor)
-            }
-        })
-
-        // Tô màu ô của người chơi.
-        gameViewModel.playerPosition().observe(this, Observer {
-            boardFragment.setSquareColor(it!!, playerColor)
-        })
-        // Tô màu ô đích.
-        gameViewModel.wonPosition().observe(this, Observer {
-            for (wonSquare in it!!) {
-                boardFragment.setSquareColor(wonSquare, wonSquareColor)
-            }
-        })
-    }
-
-    /**
-     * Hàm này tạo ra các action swipe, giúp người chơi thao tác với bảng của trò chơi.
-     */
-    private fun setSwipeAction() {
-        classicGameView.setOnTouchListener(object: OnSwipeTouchListener(this@ClassicGameActivity) {
-            override fun onSwipeLeft() {
-                gameViewModel.left()
-                updateGame()
-            }
-
-            override fun onSwipeRight() {
-                gameViewModel.right()
-                updateGame()
-            }
-
-            override fun onSwipeTop() {
-                gameViewModel.up()
-                updateGame()
-            }
-
-            override fun onSwipeBottom() {
-                gameViewModel.down()
-                updateGame()
-            }
-        })
-    }
-
-    /**
-     * Hàm này gọi các hàm khác, cần thiết cho việc cập nhật lại trạng thái
-     * của bảng sau khi người chơi di chuyển.
-     */
-    private fun updateGame() {
-        updateScore()
-        removeOldColor()
-        setCurrentColor()
-        checkGameState()
-    }
-
-    /**
-     * Hàm này cập nhật lại điểm số hiện tại của người chơi.
-     */
-    private fun updateScore() {
-        gameViewModel.score().observe(this, Observer {
-            scoreTextView.text = it.toString()
-        })
-    }
-
-    /**
-     * Hàm này xóa bỏ màu của ô ở vị trí trước đó của người chơi.
-     */
-    private fun removeOldColor() {
-        if (gameViewModel.playerPosition().value != gameViewModel.previousPlayerPosition().value) {
-            gameViewModel.previousPlayerPosition().observe(this, Observer {
-                boardFragment.setSquareColor(it!!, R.color.squareDefaultColor)
-            })
-        }
-
-        gameViewModel.previousPlayerPossibleMove().observe(this, Observer {
-            for (oldPossibleMove in it!!) {
-                boardFragment.setSquareColor(oldPossibleMove, R.color.squareDefaultColor)
-            }
-        })
-    }
-
-    /**
-     * Hàm này kiểm tra trạng thái của trò chơi (thắng / thua) ở thời điểm
-     * hiện tại và gọi các hàm cần thiết, nếu có.
-     */
-    private fun checkGameState() {
-        when(gameViewModel.gameState().value) {
-            IGameManager.GameState.PLAYING -> return
-            else -> onGameFinished()
-        }
-    }
-
-    /**
-     * Hàm này dược gọi khi trò chơi đã kết thúc.
-     * Nó sẽ thông báo cho người chơi điểm số, và tùy chọn
-     * chơi ván mới hoặc quay trỏ lại màn hình ban đầu.
+     * Hàm này sẽ được thực thi sau khi trò chơi kết thúc.
      */
     private fun onGameFinished() {
-        val database = kodein.direct.instance<IGameStatisticDatabase>(InjectConstant.GAME_STATISTIC)
+        val dialog = AlertDialog.Builder(ContextThemeWrapper(this, R.style.AppTheme))
+        dialog.setTitle("Done")
+                .setMessage("Your score is ${binding.scoreTextView.text}")
+                .setPositiveButton("OK") { _ , _ ->
+
+                }
+                .show()
+        disableSwipeAction()
+        binding.howToPlayTextView.visibility = View.INVISIBLE
+        binding.scoreTextView.setTextColor(Color.GREEN)
+        binding.scoreTextView.setOnClickListener {
+            val statisticIntent = Intent(this, GameStatisticActivity::class.java)
+            statisticIntent.putExtra(MainActivity.GAME_STATISTIC_MODE,this.intent.getStringExtra(MainActivity.GAME_MODE))
+            startActivity(statisticIntent)
+        }
+        // Xoa bo possible move.
+        viewModel.getPlayerCurrentPossibleMove().observe(this, {
+            it?.forEach {position ->
+                boardFragment?.getSquare(position)?.setTextColor(Color.BLACK)
+            }
+        })
+
+        // Thêm kết quả chơi vào database
+        val database = kodein.direct.instance<IGameStatisticDatabase>(InjectConstants.GAME_STATISTIC_DATABASE)
         database.openDatabase()
         database.addGameData(GameDataObject(
                 gameId = UUID.randomUUID().toString(),
-                playerName = "player1",
-                score = gameViewModel.score().value!!,
-                gameMode = intent.getStringExtra(MainActivity.GAME_BOARD_SIZE),
-                date = Calendar.getInstance().time))
-        database.closeDatabase()
+                score = viewModel.getScore().value!!,
+                gameMode = intent.getStringExtra(MainActivity.GAME_MODE)!!,
+                date = Calendar.getInstance().time
+        ))
 
-        howToPlayTextView.visibility = View.INVISIBLE
-        newGameButton.visibility = View.VISIBLE
-        menuButton.visibility = View.VISIBLE
-        scoreTextView.setBackgroundResource(R.color.appNameColor)
-
-        //Disable swipe
-        classicGameView.setOnTouchListener(object: OnSwipeTouchListener(this@ClassicGameActivity) {
-            override fun onSwipeLeft() {}
-            override fun onSwipeRight() {}
-            override fun onSwipeTop() {}
-            override fun onSwipeBottom() {}
-        })
-
-        newGameButton.setOnClickListener {
-            val intent = Intent(this@ClassicGameActivity, GameSelectionActivity::class.java)
-            startActivityForResult(intent, SELECT_NEW_GAME)
+        // Hiển thị các nút.
+        binding.newGameButton.visibility = View.VISIBLE
+        binding.menuButton.visibility = View.VISIBLE
+        binding.newGameButton.setOnClickListener {
+            val intent = Intent(this, GameSelectionActivity::class.java)
+            selectGameToPlayLauncher.launch(intent)
         }
-
-        menuButton.setOnClickListener {
+        binding.menuButton.setOnClickListener {
             backToMainActivity()
         }
     }
 
     /**
-     * Hàm này dùng để xử lí kết quả thu được sau khi người chơi click chọn 1 màn chơi mới.
-     * (Sau khi trò chơi đã kết thúc.
+     * Setup cử chỉ swipe của người chơi.
      */
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        when (requestCode) {
-            SELECT_NEW_GAME -> when (resultCode) {
-                Activity.RESULT_OK -> when (data?.getStringExtra("selection")) {
-                    "6x6" -> {
-                        val intent = Intent(this, ClassicGameActivity::class.java)
-                        intent.putExtra("gameBoard", "6x6")
-                        startActivity(intent)
-                    }
-                    "8x8" -> {
-                        val intent = Intent(this, ClassicGameActivity::class.java)
-                        intent.putExtra("gameBoard", "8x8")
-                        startActivity(intent)
-                    }
-                }
+    @SuppressLint("ClickableViewAccessibility")
+    private fun setupSwipeAction() {
+        binding.classicGameView.setOnTouchListener(object : OnSwipeTouchListener(this) {
+            override fun onSwipeLeft() {
+                viewModel.move(MoveDirection.LEFT)
+                updateGame()
             }
-        }
+
+            override fun onSwipeRight() {
+                viewModel.move(MoveDirection.RIGHT)
+                updateGame()
+            }
+
+            override fun onSwipeTop() {
+                viewModel.move(MoveDirection.UP)
+                updateGame()
+            }
+
+            override fun onSwipeBottom() {
+                viewModel.move(MoveDirection.DOWN)
+                updateGame()
+            }
+        })
     }
 
     /**
-     * Hàm này dùng để quay trở lại activity ban đầu.
+     * Disable hành động swipe của người chơi.
+     */
+    @SuppressLint("ClickableViewAccessibility")
+    fun disableSwipeAction() {
+        binding.classicGameView.setOnTouchListener(object : OnSwipeTouchListener(this) {
+            override fun onSwipeLeft() {}
+            override fun onSwipeRight() {}
+            override fun onSwipeTop() {}
+            override fun onSwipeBottom() {}
+        })
+    }
+
+    /**
+     * Quay trở lại màn hình chính.
      */
     private fun backToMainActivity() {
-        val intent = Intent(this@ClassicGameActivity, MainActivity::class.java)
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-        startActivity(intent)
+        finish()
     }
 
     /**
-     * Ghi đè nút back trên điện thoại người chơi.
+     * Ghi đề nút back để quay lại màn hình chính.
      */
     override fun onBackPressed() {
-        backToMainActivity()
+        val dialog = AlertDialog.Builder(ContextThemeWrapper(this, R.style.AppTheme))
+        dialog.setMessage("Quit game ?")
+                .setPositiveButton("OK") {_, _ -> backToMainActivity()}
+                .setNegativeButton("Cancel") {_, _ -> }
+                .show()
     }
 }

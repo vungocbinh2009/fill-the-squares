@@ -18,9 +18,9 @@
     <string name="topTenScoreTextView"> Top 10 score </string>
     <string name="statisticButton">Statistics</string>
     <string name="unknownValue">\?</string>
-    <string name="highestScoreLabel">Highest</string>
+    <string name="highestScoreLabel">Best</string>
     <string name="averageScoreLabel">Average</string>
-    <string name="lowestScoreLabel">Lowest</string>
+    <string name="lowestScoreLabel">Worst</string>
     <string name="settingTextView">Settings</string>
     <string name="playerNameSettingTextView">Player name</string>
     <string name="playerColorSettingTextView">Player color</string>
@@ -29,7 +29,12 @@
     <string name="playerColorSettingSummary">Set your square color when you play</string>
     <string name="fullScreenSettingSummary">When you play</string>
     <string name="settingButton">Settings</string>
-    <string name="gameVersion">Version 0.3</string>
+    <string name="gameVersion">Version 1.2</string>
     <string name="gameAuthor">From vbinhdev98 with love</string>
     <string name="howToPlayTextView">Swipe the screen to color all the squares to white color</string>
+    <string name="howToPlayLabel">How to play ?</string>
+    <string name="removeAllStatisticButton">Remove All</string>
+    <string name="privacyPolicyButton">Privacy policy</string>
+    <string name="classicGame6x6BoardHard">Classic - 6x6 (Hard)</string>
+    <string name="classicGame8x8BoardHard">Classic - 8x8 (Hard)</string>
 </resources>

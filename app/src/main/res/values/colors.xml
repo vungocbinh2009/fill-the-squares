@@ -11,4 +11,5 @@
     <color name="squareColorBlue">#1665DB</color>
     <color name="textDefaultColor">#000000</color>
     <color name="possibleMoveColor">#F9EC63</color>
+    <color name="gameBackGroundColor">#F2F0F0</color>
 </resources>

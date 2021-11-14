@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -23,7 +23,7 @@
     <fragment
         android:id="@+id/fragment"
         android:name="com.binh.games.fillthesquares.fragment.GameSettingsFragment"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -31,4 +31,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView104"
         tools:layout="@android:layout/two_line_list_item" />
-</android.support.constraint.ConstraintLayout>
+
+    <!-- Sample AdMob ID: ca-app-pub-3940256099942544/6300978111 -->
+    <!-- real AdMob ID: "ca-app-pub-1462197611933020/2085807711" -->
+</androidx.constraintlayout.widget.ConstraintLayout>

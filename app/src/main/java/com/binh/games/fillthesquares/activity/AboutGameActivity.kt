@@ -1,11 +1,16 @@
 package com.binh.games.fillthesquares.activity
 
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.view.Window
-import com.binh.games.fillthesquares.R
+import androidx.appcompat.app.AppCompatActivity
+import com.binh.games.fillthesquares.databinding.ActivityAboutGameBinding
 
+/**
+ * Đây là class chứa layout hiển thị thông tin về trò chơi.
+ */
 class AboutGameActivity : AppCompatActivity() {
+
+    private lateinit var binding: ActivityAboutGameBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -13,6 +18,7 @@ class AboutGameActivity : AppCompatActivity() {
         requestWindowFeature(Window.FEATURE_NO_TITLE)
         supportActionBar?.hide()
 
-        setContentView(R.layout.activity_about_game)
+        binding = ActivityAboutGameBinding.inflate(layoutInflater)
+        setContentView(binding.root)
     }
 }

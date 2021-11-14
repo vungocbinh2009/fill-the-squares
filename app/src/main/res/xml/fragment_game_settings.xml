@@ -1,27 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <EditTextPreference
-        android:defaultValue="Default value"
-        android:key="player_name"
-        android:selectAllOnFocus="true"
-        android:singleLine="true"
-        android:title="@string/playerNameSettingTextView" />
     <ListPreference
-        android:defaultValue="true"
         android:entries="@array/playerColorSelection"
         android:entryValues="@array/playerColorSelectionValue"
-        android:key="player_color"
-        android:summary="@string/playerColorSettingSummary"
-        android:title="@string/playerColorSettingTextView" />
-    <CheckBoxPreference
-        android:defaultValue="false"
-        android:key="is_full_screen"
-        android:persistent="true"
-        android:summary="@string/fullScreenSettingSummary"
-        android:title="@string/fullScreenSettingTextView" />
+        android:defaultValue="green"
+        android:key="player_square_color"
+        android:title="Player color" />
     <Preference android:title="About this game" >
-        <intent android:targetPackage="com.binh.games.numberandmaze"
-            android:targetClass="com.binh.games.numberandmaze.activity.AboutGameActivity"/>
+        <intent android:targetPackage="com.binh.games.fillthesquares"
+            android:targetClass="com.binh.games.fillthesquares.activity.AboutGameActivity"/>
     </Preference>
 </PreferenceScreen>

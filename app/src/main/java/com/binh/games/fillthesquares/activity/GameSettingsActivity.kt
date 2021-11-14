@@ -1,6 +1,6 @@
 package com.binh.games.fillthesquares.activity
 
-import android.support.v7.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.Window
 import com.binh.games.fillthesquares.R
@@ -14,7 +14,5 @@ class GameSettingsActivity : AppCompatActivity() {
         supportActionBar?.hide()
 
         setContentView(R.layout.activity_game_settings)
-
-
     }
 }

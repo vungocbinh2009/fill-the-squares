@@ -1,8 +1,8 @@
 package com.binh.games.fillthesquares.viewmodel
 
-import android.arch.lifecycle.LiveData
-import android.arch.lifecycle.MutableLiveData
-import android.arch.lifecycle.ViewModel
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import com.binh.games.fillthesquares.database.gamedata.GameDataObject
 import com.binh.games.fillthesquares.database.gamedata.IGameStatisticDatabase
 
@@ -57,6 +57,10 @@ class GameStatisticViewModel : ViewModel() {
         val result = MutableLiveData<List<GameDataObject>>()
         result.value = database.getTopScore(numberOfScore, gameMode)
         return result
+    }
+
+    fun removeAllGames(vararg gameMode: String) {
+        database.removeAllGames(*gameMode)
     }
 
     fun closeDatabase() {

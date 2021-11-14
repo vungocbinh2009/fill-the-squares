@@ -2,13 +2,11 @@ package com.binh.games.fillthesquares.activity
 
 import android.app.Activity
 import android.content.Intent
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import android.support.design.widget.Snackbar
 import android.view.Window
+import androidx.appcompat.app.AppCompatActivity
 import com.binh.games.fillthesquares.MainActivity
-import com.binh.games.fillthesquares.R
-import kotlinx.android.synthetic.main.activity_game_selection.*
+import com.binh.games.fillthesquares.databinding.ActivityGameSelectionBinding
 
 /**
  * Đây là activity dùng để giúp người chơi chọn
@@ -24,7 +22,11 @@ class GameSelectionActivity : AppCompatActivity() {
         const val PLAYER_SELECTION = "selection"
         const val CLASSIC_GAME_6X6 = "6x6"
         const val CLASSIC_GAME_8X8 = "8x8"
+        const val CLASSIC_GAME_6X6_HARD = "6x6Hard"
+        const val CLASSIC_GAME_8X8_HARD = "8x8Hard"
     }
+
+    private lateinit var binding: ActivityGameSelectionBinding
     /**
      * Thực hiện khởi tạo giao diện và xử lý các sự kiện
      * khi người chơi bấm vào các màn chơi.
@@ -35,34 +37,40 @@ class GameSelectionActivity : AppCompatActivity() {
         requestWindowFeature(Window.FEATURE_NO_TITLE)
         supportActionBar?.hide()
 
-        setContentView(R.layout.activity_game_selection)
+        binding = ActivityGameSelectionBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-        classicGame6x6Button.setOnClickListener {
+        binding.classicGame6x6Button.setOnClickListener {
             val intent = Intent(this, MainActivity::class.java)
             intent.putExtra(PLAYER_SELECTION, CLASSIC_GAME_6X6)
             setResult(Activity.RESULT_OK, intent)
             finish()
         }
 
-        classicGame8x8Button.setOnClickListener {
+        binding.classicGame8x8Button.setOnClickListener {
             val intent = Intent(this, MainActivity::class.java)
             intent.putExtra(PLAYER_SELECTION, CLASSIC_GAME_8X8)
             setResult(Activity.RESULT_OK, intent)
             finish()
         }
-    }
 
-    /**
-     * Hàm này dùng để hiển thị snackbar chờ đợi cho người dùng.
-     */
-    private fun showSnackBar() {
-        Snackbar.make(gameSelectionView, "Loading, please wait", Snackbar.LENGTH_INDEFINITE).show()
+        binding.classicGame6x6HardButton.setOnClickListener {
+            val intent = Intent(this, MainActivity::class.java)
+            intent.putExtra(PLAYER_SELECTION, CLASSIC_GAME_6X6_HARD)
+            setResult(Activity.RESULT_OK, intent)
+            finish()
+        }
+
+        binding.classicGame8x8HardButton.setOnClickListener {
+            val intent = Intent(this, MainActivity::class.java)
+            intent.putExtra(PLAYER_SELECTION, CLASSIC_GAME_8X8_HARD)
+            setResult(Activity.RESULT_OK, intent)
+            finish()
+        }
     }
 
     override fun onBackPressed() {
         // Quay trở lại menu.
-        val intent = Intent(this, MainActivity::class.java)
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-        startActivity(intent)
+        finish()
     }
 }

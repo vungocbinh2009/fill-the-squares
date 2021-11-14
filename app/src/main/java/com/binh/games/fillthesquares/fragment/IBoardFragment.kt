@@ -1,5 +1,6 @@
 package com.binh.games.fillthesquares.fragment
 
+import android.graphics.Color
 import android.widget.TableLayout
 import android.widget.TableRow
 import android.widget.TextView
@@ -53,5 +54,13 @@ interface IBoardFragment {
     fun getSquare(position: Pair<Int, Int>) : TextView {
         val tableRow = table.getChildAt(position.first) as TableRow
         return tableRow.getChildAt(position.second) as TextView
+    }
+
+    /**
+     * Hàm này dùng để set màu cho 1 ô, nhưng dùng đến color có sẵn, được định nghĩa sẵn.
+     */
+    fun setSquareSimpleColor(position: Pair<Int, Int>, color: Int) {
+        val square = getSquare(position)
+        square.setBackgroundColor(color)
     }
 }

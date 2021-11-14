@@ -15,10 +15,6 @@ open class GameDataObject(
         @PrimaryKey
         var gameId: String = UUID.randomUUID().toString(),
         /**
-         * Đây là thuộc tính lưu lại tên người chơi.
-         */
-        var playerName: String = "player",
-        /**
          * Đây là thuộc tính lưu lại điểm số của người chơi.
          * (Có thể quy định thêm 1 số giá trị đặc biệt như -1 nghĩa là người chơi thua..)
          */

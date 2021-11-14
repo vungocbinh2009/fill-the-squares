@@ -45,7 +45,7 @@ class GameStatisticDatabaseImpl : IGameStatisticDatabase {
     }
 
     override fun getTopScore(numberOfGame: Int, gameMode: String): List<GameDataObject> {
-        return database.where(GameDataObject::class.java).equalTo("gameMode", gameMode).sort("score", Sort.DESCENDING,"date",Sort.DESCENDING).limit(10).findAll()
+        return database.where(GameDataObject::class.java).equalTo("gameMode", gameMode).sort("score", Sort.ASCENDING,"date",Sort.ASCENDING).limit(10).findAll()
     }
 
     override fun addGameData(data: GameDataObject): IGameStatisticDatabase {

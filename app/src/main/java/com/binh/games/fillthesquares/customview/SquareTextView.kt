@@ -3,12 +3,13 @@ package com.binh.games.fillthesquares.customview
 import android.content.Context
 import android.util.AttributeSet
 import android.view.Gravity
-import android.widget.TextView
+import androidx.appcompat.widget.AppCompatTextView
+import kotlin.math.min
 
 /**
  * Lớp này biểu diễn các ô vuông trong bản đồ của trò chơi.
  */
-class SquareTextView(context: Context?, attrs: AttributeSet?) : TextView(context, attrs) {
+class SquareTextView(context: Context?, attrs: AttributeSet?) : AppCompatTextView(context!!, attrs) {
 
     /**
      * Phương thức này tính lại kích thước của text view để đảm bảo
@@ -18,7 +19,7 @@ class SquareTextView(context: Context?, attrs: AttributeSet?) : TextView(context
         super.onMeasure(widthMeasureSpec, heightMeasureSpec)
         val width = MeasureSpec.getSize(widthMeasureSpec)
         val height = MeasureSpec.getSize(heightMeasureSpec)
-        val size = Math.min(width, height)
+        val size = min(width, height)
         setMeasuredDimension(size, size)
 
         // Một số cài đặt khác.

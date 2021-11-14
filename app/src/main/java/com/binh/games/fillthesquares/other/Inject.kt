@@ -4,177 +4,73 @@ import com.binh.games.fillthesquares.core.basic.BoardCell
 import com.binh.games.fillthesquares.core.basic.IBoard
 import com.binh.games.fillthesquares.core.basic.IGameManager
 import com.binh.games.fillthesquares.core.basic.IPlayer
-import com.binh.games.fillthesquares.core.classicgame.ClassicBoard
-import com.binh.games.fillthesquares.core.classicgame.ClassicGameManager
-import com.binh.games.fillthesquares.core.classicgame.ClassicPlayer
+import com.binh.games.fillthesquares.core.classic.ClassicBoard
+import com.binh.games.fillthesquares.core.classic.ClassicGameManager
+import com.binh.games.fillthesquares.core.classic.ClassicPlayer
 import com.binh.games.fillthesquares.database.gamedata.GameStatisticDatabaseImpl
 import com.binh.games.fillthesquares.database.gamedata.IGameStatisticDatabase
 import com.binh.games.fillthesquares.fragment.Board6x6Fragment
 import com.binh.games.fillthesquares.fragment.Board8x8Fragment
 import com.binh.games.fillthesquares.fragment.IBoardFragment
-import com.binh.games.fillthesquares.other.InjectConstant.BASIC_MODULE
-import com.binh.games.fillthesquares.other.InjectConstant.BOARD_6X6_FRAGMENT
-import com.binh.games.fillthesquares.other.InjectConstant.BOARD_8X8_FRAGMENT
-import com.binh.games.fillthesquares.other.InjectConstant.CLASSIC_BOARD_6X6
-import com.binh.games.fillthesquares.other.InjectConstant.CLASSIC_BOARD_6X6_WITH_VALIDATION
-import com.binh.games.fillthesquares.other.InjectConstant.CLASSIC_BOARD_8X8
-import com.binh.games.fillthesquares.other.InjectConstant.CLASSIC_BOARD_8X8_WITH_VALIDATION
-import com.binh.games.fillthesquares.other.InjectConstant.CLASSIC_GAME_6X6_MODULE
-import com.binh.games.fillthesquares.other.InjectConstant.CLASSIC_GAME_6X6_MODULE_WITH_VALIDATION
-import com.binh.games.fillthesquares.other.InjectConstant.CLASSIC_GAME_8X8_MODULE
-import com.binh.games.fillthesquares.other.InjectConstant.CLASSIC_GAME_8X8_MODULE_WITH_VALIDATION
-import com.binh.games.fillthesquares.other.InjectConstant.CLASSIC_GAME_MANAGER_6X6
-import com.binh.games.fillthesquares.other.InjectConstant.CLASSIC_GAME_MANAGER_6X6_WITH_VALIDATION
-import com.binh.games.fillthesquares.other.InjectConstant.CLASSIC_GAME_MANAGER_8X8
-import com.binh.games.fillthesquares.other.InjectConstant.CLASSIC_GAME_MANAGER_8X8_WITH_VALIDATION
-import com.binh.games.fillthesquares.other.InjectConstant.DATABASE_MODULE
-import com.binh.games.fillthesquares.other.InjectConstant.FRAGMENT_MODULE
-import com.binh.games.fillthesquares.other.InjectConstant.GAME_STATISTIC
-import com.binh.games.fillthesquares.other.InjectConstant.NORMAL_PLAYER
-import com.binh.games.fillthesquares.other.InjectConstant.RANDOM_BOARD_CELL
-import com.binh.games.fillthesquares.other.InjectConstant.VISIBLE_WITH_NUMBER_BOARD_CELL
-import com.binh.games.fillthesquares.other.InjectConstant.WON_WITH_NUMBER_BOARD_CELL
+import com.binh.games.fillthesquares.other.InjectConstants.BOARD_FRAGMENT_6x6
+import com.binh.games.fillthesquares.other.InjectConstants.BOARD_FRAGMENT_8x8
+import com.binh.games.fillthesquares.other.InjectConstants.CLASSIC_GAME_MANAGER_6x6
+import com.binh.games.fillthesquares.other.InjectConstants.CLASSIC_GAME_MANAGER_6x6_HARD
+import com.binh.games.fillthesquares.other.InjectConstants.CLASSIC_GAME_MANAGER_8x8
+import com.binh.games.fillthesquares.other.InjectConstants.CLASSIC_GAME_MANAGER_8x8_HARD
+import com.binh.games.fillthesquares.other.InjectConstants.GAME_STATISTIC_DATABASE
+import com.binh.games.fillthesquares.other.InjectConstants.NORMAL_PLAYER
+import com.binh.games.fillthesquares.other.InjectConstants.SQUARE_CLASSIC_BOARD
+import com.binh.games.fillthesquares.other.InjectConstants.SQUARE_CLASSIC_BOARD_HARD
 import org.kodein.di.Kodein
-import org.kodein.di.generic.*
+import org.kodein.di.generic.bind
+import org.kodein.di.generic.factory
+import org.kodein.di.generic.instance
+import org.kodein.di.generic.provider
 
-object InjectConstant {
-    const val BASIC_MODULE = "basic"
-    const val RANDOM_BOARD_CELL = "random"
-    const val VISIBLE_WITH_NUMBER_BOARD_CELL = "visibleWithNumber"
-    const val WON_WITH_NUMBER_BOARD_CELL = "wonWithNumber"
+// Đây là file chứa toàn bộ các inject cần thiết trong ứng dụng.
+object InjectConstants {
     const val NORMAL_PLAYER = "normalPlayer"
-    const val CLASSIC_GAME_6X6_MODULE = "classicGame6x6"
-    const val CLASSIC_BOARD_6X6 = "classicBoard6x6"
-    const val CLASSIC_GAME_MANAGER_6X6 = "classicGameManager6x6"
-    const val CLASSIC_GAME_8X8_MODULE = "classicGame8x8"
-    const val CLASSIC_BOARD_8X8 = "classicBoard8x8"
-    const val CLASSIC_GAME_MANAGER_8X8 = "classicGameManager8x8"
-    const val CLASSIC_GAME_6X6_MODULE_WITH_VALIDATION = "validClassicGame6x6"
-    const val CLASSIC_BOARD_6X6_WITH_VALIDATION = "validClassicBoard6x6"
-    const val CLASSIC_GAME_MANAGER_6X6_WITH_VALIDATION = "validClassicGameManager6x6"
-    const val CLASSIC_GAME_8X8_MODULE_WITH_VALIDATION = "validClassicGame8x8"
-    const val CLASSIC_BOARD_8X8_WITH_VALIDATION = "validClassicBoard8x8"
-    const val CLASSIC_GAME_MANAGER_8X8_WITH_VALIDATION = "validClassicGameManager8x8"
-    const val FRAGMENT_MODULE = "fragment"
-    const val BOARD_6X6_FRAGMENT = "board6x6"
-    const val BOARD_8X8_FRAGMENT = "board8x8"
-    const val DATABASE_MODULE = "database"
-    const val GAME_STATISTIC = "gameStatistic"
+    const val SQUARE_CLASSIC_BOARD = "squareClassicBoard"
+    const val SQUARE_CLASSIC_BOARD_HARD = "squareClassicBoardHard"
+    const val CLASSIC_GAME_MANAGER_6x6 = "classicGameManager6x6"
+    const val CLASSIC_GAME_MANAGER_8x8 = "classicGameManager8x8"
+    const val CLASSIC_GAME_MANAGER_6x6_HARD = "classicGameManager6x6Hard"
+    const val CLASSIC_GAME_MANAGER_8x8_HARD = "classicGameManager8x8Hard"
+    const val BOARD_FRAGMENT_6x6 = "boardFragment6x6"
+    const val BOARD_FRAGMENT_8x8 = "boardFragment8x8"
+    const val GAME_STATISTIC_DATABASE = "gameDatabase"
 }
 
-/**
- * Nội dung trong file này là các module inject, sử dụng Kodein.
- */
-
-
-/**
- * Đây là module cơ bản nhất, cung cấp các dependency dùng cho các module sau.
- */
-val basic = Kodein.Module (BASIC_MODULE) {
-    bind<BoardCell>(RANDOM_BOARD_CELL) with factory {
-        randomRange: IntRange -> BoardCell.VisibleBoardCell(randomRange.random())
-    }
-
-    bind<BoardCell>(VISIBLE_WITH_NUMBER_BOARD_CELL) with factory {
-        number: Int -> BoardCell.VisibleBoardCell(number)
-    }
-
-    bind<BoardCell>(WON_WITH_NUMBER_BOARD_CELL) with factory {
-        number: Int -> BoardCell.WonBoardCell(number)
-    }
-
-    bind<IPlayer>(NORMAL_PLAYER) with provider {
-        ClassicPlayer(Pair(0,0))
-    }
-}
-
-/**
- * Đây là module dùng để cung cấp object [ClassicGameManager] bảng 6x6 dùng cho activity tương ứng
- */
-val classicGame6x6 = Kodein.Module (CLASSIC_GAME_6X6_MODULE) {
-    bind<IBoard>(CLASSIC_BOARD_6X6) with factory { randomRange: IntRange ->
-        val result = ClassicBoard(Pair(6,6), Array(6) { Array(6) {
-            instance<IntRange,BoardCell>(RANDOM_BOARD_CELL, arg = randomRange)}
+val inject = Kodein.Module("Basic") {
+    bind<IPlayer>(NORMAL_PLAYER) with provider { ClassicPlayer(Pair(0,0)) }
+    bind<IBoard>(SQUARE_CLASSIC_BOARD) with factory { size: Int ->
+        ClassicBoard(Pair(size, size), Array(size) {
+            Array(size) {
+                BoardCell.NormalBoardCell((1..(size/2)).random())
+            }
         })
-        result.setCell(Pair(5,5), instance(WON_WITH_NUMBER_BOARD_CELL, arg = 0))
     }
-
-    bind<IGameManager>(CLASSIC_GAME_MANAGER_6X6) with provider {
-        ClassicGameManager(instance(CLASSIC_BOARD_6X6,arg = 1..3),
-                instance(NORMAL_PLAYER), IGameManager.GameState.PLAYING, 100)
-    }
-}
-
-/**
- * Đây là module dùng để cung cấp object [ClassicGameManager] bảng 8x8 dùng cho activity tương ứng.
- */
-val classicGame8x8 = Kodein.Module(CLASSIC_GAME_8X8_MODULE) {
-    bind<IBoard>(CLASSIC_BOARD_8X8) with factory { randomRange: IntRange ->
-        val result = ClassicBoard(Pair(8,8), Array(8) { Array(8) {
-            instance<IntRange,BoardCell>(RANDOM_BOARD_CELL, arg = randomRange)}
+    bind<IBoard>(SQUARE_CLASSIC_BOARD_HARD) with factory { size: Int ->
+        ClassicBoard(Pair(size, size), Array(size) {
+            Array(size) {
+                BoardCell.NormalBoardCell((2..(size - 2)).random())
+            }
         })
-        result.setCell(Pair(7,7), instance(WON_WITH_NUMBER_BOARD_CELL, arg = 0))
     }
-
-    bind<IGameManager>(CLASSIC_GAME_MANAGER_8X8) with provider {
-        ClassicGameManager(instance(CLASSIC_BOARD_8X8,arg = 1..4), instance(NORMAL_PLAYER),
-                IGameManager.GameState.PLAYING, 100)
+    bind<IGameManager>(CLASSIC_GAME_MANAGER_6x6) with provider {
+        ClassicGameManager(instance(SQUARE_CLASSIC_BOARD,6), instance(NORMAL_PLAYER))
     }
-}
-
-/**
- * Đây là module dùng để cung cấp object [ClassicGameManager] bảng 8x8 dùng cho activity tương ứng.
- *
- * Nhưng nó sẽ đảm bảo bảng cung cấp sẽ có lời giải.
- */
-val validClassicGame6x6 = Kodein.Module(CLASSIC_GAME_6X6_MODULE_WITH_VALIDATION) {
-    importOnce(classicGame6x6)
-    bind<IBoard>(CLASSIC_BOARD_6X6_WITH_VALIDATION) with provider {
-        var randomBoard: IBoard = instance(CLASSIC_BOARD_6X6, arg = 2..4)
-        while (!validateClassicBoard(randomBoard, instance(NORMAL_PLAYER), Pair(0,0))) {
-            randomBoard = instance(CLASSIC_BOARD_6X6, arg = 2..4)
-        }
-        randomBoard
+    bind<IGameManager>(CLASSIC_GAME_MANAGER_8x8) with provider {
+        ClassicGameManager(instance(SQUARE_CLASSIC_BOARD,8), instance(NORMAL_PLAYER))
     }
-
-    bind<IGameManager>(CLASSIC_GAME_MANAGER_6X6_WITH_VALIDATION) with provider {
-        ClassicGameManager(instance(CLASSIC_BOARD_6X6_WITH_VALIDATION), instance(NORMAL_PLAYER),
-                IGameManager.GameState.PLAYING, 100)
+    bind<IGameManager>(CLASSIC_GAME_MANAGER_6x6_HARD) with provider {
+        ClassicGameManager(instance(SQUARE_CLASSIC_BOARD_HARD,6), instance(NORMAL_PLAYER))
     }
-}
-
-/**
- * Đây là module dùng để cung cấp object [ClassicGameManager] bảng 8x8 dùng cho activity tương ứng.
- *
- * Nhưng nó sẽ đảm bảo bảng cung cấp sẽ có lời giải.
- */
-val validClassicGame8x8 = Kodein.Module(CLASSIC_GAME_8X8_MODULE_WITH_VALIDATION) {
-    importOnce(classicGame8x8)
-    bind<IBoard>(CLASSIC_BOARD_8X8_WITH_VALIDATION) with provider {
-        var randomBoard: IBoard = instance(CLASSIC_BOARD_8X8, arg = 3..6)
-        while (!validateClassicBoard(randomBoard, instance(NORMAL_PLAYER), Pair(0,0))) {
-            randomBoard = instance(CLASSIC_BOARD_8X8, arg = 3..6)
-        }
-        randomBoard
+    bind<IGameManager>(CLASSIC_GAME_MANAGER_8x8_HARD) with provider {
+        ClassicGameManager(instance(SQUARE_CLASSIC_BOARD_HARD,8), instance(NORMAL_PLAYER))
     }
-
-    bind<IGameManager>(CLASSIC_GAME_MANAGER_8X8_WITH_VALIDATION) with provider {
-        ClassicGameManager(instance(CLASSIC_BOARD_8X8_WITH_VALIDATION), instance(NORMAL_PLAYER),
-                IGameManager.GameState.PLAYING, 100)
-    }
-}
-
-/**
- * Đây là module cung cấp các fragment 6x6 và 8x8 cho các activity cần thiết.
- */
-val boardFragment = Kodein.Module(FRAGMENT_MODULE) {
-    bind<IBoardFragment>(BOARD_6X6_FRAGMENT) with provider { Board6x6Fragment() }
-    bind<IBoardFragment>(BOARD_8X8_FRAGMENT) with provider { Board8x8Fragment() }
-}
-
-/**
- *
- */
-val gameDatabase = Kodein.Module(DATABASE_MODULE) {
-    bind<IGameStatisticDatabase>(GAME_STATISTIC) with provider { GameStatisticDatabaseImpl() }
+    bind<IBoardFragment>(BOARD_FRAGMENT_6x6) with provider { Board6x6Fragment() }
+    bind<IBoardFragment>(BOARD_FRAGMENT_8x8) with provider { Board8x8Fragment() }
+    bind<IGameStatisticDatabase>(GAME_STATISTIC_DATABASE) with provider { GameStatisticDatabaseImpl() }
 }

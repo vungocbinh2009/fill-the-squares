@@ -13,37 +13,83 @@
         android:layout_height="wrap_content"
         android:text="@string/chooseYourGameTextView" />
 
+    <!-- Sample AdMob ID: ca-app-pub-3940256099942544/6300978111 -->
+    <!-- real AdMob ID: "ca-app-pub-1462197611933020/2787858759" -->
+
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="4dp">
+        android:layout_weight="1">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical" >
+            android:orientation="vertical">
 
-            <Button
-                android:id="@+id/classicGame6x6Button"
-                style="@style/Widget.AppCompat.Button.Borderless"
+            <TableLayout
+                android:id="@+id/gameTable"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/gameSelectionColor1"
-                android:paddingTop="4dp"
-                android:paddingBottom="4dp"
-                android:text="@string/classicGame6x6Board"
-                android:textSize="18sp" />
+                android:gravity="center|fill"
+                tools:visibility="visible">
 
-            <Button
-                android:id="@+id/classicGame8x8Button"
-                style="@style/Widget.AppCompat.Button.Borderless"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@color/gameSelectionColor2"
-                android:paddingTop="4dp"
-                android:paddingBottom="4dp"
-                android:text="@string/classicGame8x8Board"
-                android:textSize="18sp" />
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center">
+
+                    <com.binh.games.fillthesquares.customview.SquareTextView
+                        android:id="@+id/classicGame6x6Button"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:background="@color/gameSelectionColor1"
+                        android:text="@string/classicGame6x6Board"
+                        android:textAllCaps="true"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                        android:visibility="visible" />
+
+                    <com.binh.games.fillthesquares.customview.SquareTextView
+                        android:id="@+id/classicGame8x8Button"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:background="@color/gameSelectionColor2"
+                        android:text="@string/classicGame8x8Board"
+                        android:textAllCaps="true"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                        android:visibility="visible" />
+                </TableRow>
+
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center">
+
+                    <com.binh.games.fillthesquares.customview.SquareTextView
+                        android:id="@+id/classicGame6x6HardButton"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:background="@color/gameSelectionColor2"
+                        android:text="@string/classicGame6x6BoardHard"
+                        android:textAllCaps="true"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                        android:visibility="visible" />
+
+                    <com.binh.games.fillthesquares.customview.SquareTextView
+                        android:id="@+id/classicGame8x8HardButton"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:background="@color/gameSelectionColor1"
+                        android:text="@string/classicGame8x8BoardHard"
+                        android:textAllCaps="true"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                        android:visibility="visible" />
+                </TableRow>
+
+            </TableLayout>
         </LinearLayout>
     </ScrollView>
 

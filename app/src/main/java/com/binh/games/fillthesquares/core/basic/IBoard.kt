@@ -1,62 +1,49 @@
 package com.binh.games.fillthesquares.core.basic
 
 /**
- * Đây là interface biểu diễn 1 bản đồ trong trò chơi.
- * Để có 1 bản đồ bạn cần cung cấp kích thước và các ô board cell trong bản đồ.
- * Sau đó bạn cần cung cấp cách để người chơi di chuyển được trên bản đồ
- * 4 hàm cuối cùng cung cấp các phương thức để module cao hơn "vẽ" bản đồ.
+ * Enum này định nghĩa các hướng di chuyển của người chơi trong game.
  */
+enum class MoveDirection {UP, DOWN, LEFT, RIGHT}
 interface IBoard {
-    /**
-     * Kích thước của bảng.
-     */
     val size: Pair<Int, Int>
 
     /**
-     * Trả về ô tiếp theo trong bảng khi người chơi muốn đi lên trên.
+     * Trả về ô tiếp theo trong bảng theo hướng di chuyển.
      */
-    fun nextCellUp(current: Pair<Int, Int>) : Pair<Int, Int>
+    fun nextCell(direction: MoveDirection, currentPosition: Pair<Int, Int>) : Pair<Int, Int>
 
     /**
-     * Trả về ô tiếp theo trong bảng khi người chơi muốn đi xuống dưới.
+     * Đặt trạng thái cho 1 hoặc nhiều ô trong bảng.
      */
-    fun nextCellDown(current: Pair<Int, Int>) : Pair<Int, Int>
+    fun setBoardCellState(state: BoardCellState,vararg positions: Pair<Int, Int>)
 
     /**
-     * Trả về ô tiếp theo trong bảng khi người chơi muốn đi sang trái.
+     * Đặt giá trị cho 1 hoặc nhiều ô trong bảng.
      */
-    fun nextCellLeft(current: Pair<Int, Int>) : Pair<Int, Int>
+    fun setBoardCellNumber(number: Int, vararg positions: Pair<Int, Int>)
 
     /**
-     * Trả về ô tiếp theo trong bảng khi người chơi muốn đi sang phải.
+     * Lấy 1 hoặc nhiều đối tượng boardCell khi biết vị trí của nó trong bảng.
      */
-    fun nextCellRight(current: Pair<Int, Int>) : Pair<Int, Int>
+    fun getBoardCell(vararg positions: Pair<Int, Int>) : List<BoardCell>
 
     /**
-     * Trả về danh sách các ô "tàng hình" trong bảng.
-     * (Người chơi sẽ không nhìn thấy các ô này khi chơi)
+     * Lấy về 1 danh sách các ô trong bảng dựa vào trạng thái.
      */
-    fun invisibleBoardCell() : List<Pair<Int, Int>>
+    fun getAllBoardCellPosition(vararg state: BoardCellState) : List<Pair<Int, Int>>
 
     /**
-     * Trả về các ô mà người chơi khi đi vào đó sẽ thắng.
-     * (Các ô này sẽ được tô màu xanh trên bản đồ)
+     * Cập nhật boardCell dựa vào nước đi của người chơi.
      */
-    fun wonBoardCell() : List<Pair<Int, Int>>
+    fun updateBoardCell(possibleChangeBoardCell: List<Pair<Int, Int>>)
 
     /**
-     * Trả về các ô mà người chơi sẽ thua nếu đi vào đó.
-     * (Các ô này sẽ được tô màu đỏ (nếu có).
+     * Lấy về danh sách các ô trong bảng có sự thay đổi sau 1 nước đi của người chơi.
      */
-    fun lostBoardCell() : List<Pair<Int, Int>>
+    fun getChangedBoardCellPosition() : List<Pair<Int, Int>>
 
     /**
-     * Trả về ô trong bảng tại 1 vị trí cho trước.
+     * Trả về trạng thái của game hiện tại.
      */
-    fun getCell(position: Pair<Int, Int>) : BoardCell
-
-    /**
-     * Thay đổi ô trong bảng tại 1 vị trí cho trước.
-     */
-    fun setCell(position: Pair<Int, Int>, cell: BoardCell) : IBoard
+    fun getGameState() : GameState
 }

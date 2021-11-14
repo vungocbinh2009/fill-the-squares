@@ -1,69 +1,38 @@
 package com.binh.games.fillthesquares.core.basic
 
-/**
- * Interface này mô tả 1 người chơi trong trò chơi.
- * Các phương thức dưới đây giúp người chơi có thể di chuyển trên bản đồ.
- * đồng thời cung cấp các thống tin về vị trí của người chơi
- *  - Vị trí hiện tại.
- *  - Lịch sử về các vị trí đã di chuyển đến.
- *  - Các ô mà người chơi đã di chuyển qua (trong 1 lần di chuyển gần nhất)
- */
 interface IPlayer {
     /**
-     * Thuộc tính này lưu lại vị trí của người chơi hiện tai.
+     * Người chơi di chuyển.
      */
-    var playerPosition: Pair<Int, Int>
+    fun move(direction: MoveDirection, board: IBoard) : Boolean
 
     /**
-     * Phương thức này lưu lại vj trí của người chơi trước đó.
+     * Trả về vị trí hiện tại.
      */
-    var previousPlayerPosition: Pair<Int, Int>
+    fun getCurrentPosition() : Pair<Int, Int>
 
     /**
-     * Phương thúc này trả về danh sách các vị trí mà người chơi đã đi đến.
+     * Trả về vị trí trước đó.
      */
-    fun playerPositionHistory() : List<Pair<Int, Int>>
+    fun getPreviousPosition() : Pair<Int, Int>
 
     /**
-     * Phương thức trả về các ô mà người chơi đã đi qua trong nước đi trước đó.
+     * Trả về các nước đi có thể có tiếp theo.
      */
-    fun playerMoveAllCell() : List<Pair<Int, Int>>
+    fun getPossibleMove(board: IBoard) : List<Pair<Int, Int>>
 
     /**
-     * Phương thức này trả về danh sách các ô mà người chơi có thể đi tới trong
-     * lượt đi tiếp theo của họ nếu họ đang đứng tại vị trí [position]
+     * Trả về các nước đi có thể có trước đó.
      */
-    fun playerPossibleMove(position: Pair<Int, Int>, board: IBoard) : List<Pair<Int, Int>> {
-        val result = ArrayList<Pair<Int, Int>>()
-        val step = board.getCell(position).number
-        val move = arrayOf(board::nextCellDown, board::nextCellUp, board::nextCellLeft, board::nextCellRight)
-        for (i in 0..3) {
-            var finalPosition = position
-            for (j in 1..step) {
-                finalPosition = move[i](finalPosition)
-            }
-            result.add(finalPosition)
-        }
-        return result
-    }
+    fun getPreviousPossibleMove(board: IBoard) : List<Pair<Int, Int>>
 
     /**
-     * Phương thức này giúp người chơi đi lên trên.
+     * Trả về danh sách các ô có thể sẽ thay đổi trên bảng.
      */
-    fun up(board: IBoard) : Pair<Int, Int>
+    fun getPossibleChangeBoardCell() : List<Pair<Int, Int>>
 
     /**
-     * Phương thức này giúp người chơi đi xuống dưới.
+     * Trả về điểm số cộng thêm cho bước đi gần nhất.
      */
-    fun down(board: IBoard) : Pair<Int, Int>
-
-    /**
-     * Phương thức này giúp người chơi đi sang trái.
-     */
-    fun left(board: IBoard) : Pair<Int, Int>
-
-    /**
-     * Phương thức này giúp người chơi đi sang phải.
-     */
-    fun right(board: IBoard) : Pair<Int, Int>
+    fun moveScore() : Int
 }

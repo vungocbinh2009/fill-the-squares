@@ -39,10 +39,10 @@ abstract class OnSwipeTouchListener(context: Context) : View.OnTouchListener {
     private inner class GestureListener : GestureDetector.SimpleOnGestureListener() {
         override fun onFling(e1: MotionEvent, e2: MotionEvent, velocityX: Float,
                              velocityY: Float): Boolean {
-            val SWIPE_DISTANCE_THRESHOLD_X = 100 // Distance: Khoảng cách.
-            val SWIPE_VELOCITY_THRESHOLD_X = 100 // Velocity: Tốc độ.
-            val SWIPE_DISTANCE_THRESHOLD_Y = 100
-            val SWIPE_VELOCITY_THRESHOLD_Y = 100
+            val SWIPE_DISTANCE_THRESHOLD_X = 70 // Distance: Khoảng cách.
+            val SWIPE_VELOCITY_THRESHOLD_X = 70 // Velocity: Tốc độ.
+            val SWIPE_DISTANCE_THRESHOLD_Y = 70
+            val SWIPE_VELOCITY_THRESHOLD_Y = 70
 
             val distanceX = e2.x - e1.x
             val distanceY = e2.y - e1.y

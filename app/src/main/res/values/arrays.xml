@@ -2,12 +2,12 @@
 <resources>
     <string-array name="playerColorSelection" >
         <item>Green</item>
-        <item>Purple</item>
+        <item>Blue</item>
         <item>Red</item>
 </string-array>
     <string-array name="playerColorSelectionValue" >
         <item>green</item>
-        <item>purple</item>
+        <item>blue</item>
         <item>red</item>
     </string-array>
 </resources>
